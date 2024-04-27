@@ -22,17 +22,14 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioResponseDto> create(@RequestBody UsuarioCreateDto createDto) {
-        Usuario user = new Usuario();
-        BeanUtils.copyProperties(createDto, user);
-        Usuario userSalvo = usuarioService.salvar(user);
-        String role = userSalvo.getRole().name().substring("ROLE_".length());
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponseDto(userSalvo, role));
+        Usuario user = usuarioService.salvar(UsuarioMapper.toUsuario(createDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDto> getById(@PathVariable Long id) {
         Usuario user = usuarioService.buscarPorId(id);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(UsuarioMapper.toDto(user));
     }
 
     @PatchMapping("/{id}")

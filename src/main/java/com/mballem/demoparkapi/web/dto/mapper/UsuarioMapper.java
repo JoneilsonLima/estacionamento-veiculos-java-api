@@ -5,22 +5,17 @@ import com.mballem.demoparkapi.web.dto.UsuarioCreateDto;
 import com.mballem.demoparkapi.web.dto.UsuarioResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.springframework.beans.BeanUtils;
 
 public class UsuarioMapper {
     public static Usuario toUsuario(UsuarioCreateDto createDto) {
-        return new ModelMapper().map(createDto, Usuario.class);
+        Usuario user = new Usuario();
+        BeanUtils.copyProperties(createDto, user);
+        return user;
     }
 
     public static UsuarioResponseDto toDto(Usuario usuario) {
         String role = usuario.getRole().name().substring("ROLE_".length());
-        PropertyMap<Usuario, UsuarioResponseDto> props = new PropertyMap<Usuario, UsuarioResponseDto>() {
-            @Override
-            protected void configure() {
-                map(new UsuarioResponseDto(usuario, role));
-            }
-        };
-        ModelMapper mapper = new ModelMapper();
-        mapper.addMappings(props);
-        return mapper.map(usuario, UsuarioResponseDto.class);
+        return new UsuarioResponseDto(usuario, role);
     }
 }
